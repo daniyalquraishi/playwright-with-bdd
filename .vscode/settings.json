@@ -1,0 +1,7 @@
+{
+  "cucumberautocomplete.steps": ["step-definitions/*.js"],
+  "cucumberautocomplete.syncfeatures": "features/Platforms/Admin/*.feature",
+  "cucumberautocomplete.strictGherkinCompletion": false,
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
