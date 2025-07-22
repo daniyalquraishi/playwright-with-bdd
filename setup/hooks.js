@@ -10,7 +10,7 @@ const cucumber = require('../cucumber');
 const { reporter } = require('./../reporter');
 
 const options = {
-  headless: true,
+  headless: false,
   slowMo: 500,
 };
 
