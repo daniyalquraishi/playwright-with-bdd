@@ -88,5 +88,76 @@ class creatinglyLocators {
       await page.waitForTimeout(1000);
     }
   }
+
+  async dragAndDropToInvalidArtboard() {
+  const container = await page.$('[data-testid="Container"]');
+  const invalidTarget = await page.$('//button[normalize-space()="Text"]');
+
+  const containerBox = await container.boundingBox();
+  const invalidBox = await invalidTarget.boundingBox();
+
+  if (containerBox && invalidBox) {
+    await page.mouse.move(
+      containerBox.x + containerBox.width / 2,
+      containerBox.y + containerBox.height / 2
+    );
+    await page.mouse.down();
+
+    await page.mouse.move(
+      invalidBox.x + invalidBox.width / 2,
+      invalidBox.y + invalidBox.height / 2,
+      { steps: 20 }
+    );
+
+    await page.mouse.up();
+    await page.waitForTimeout(1000); // let error message appear
+  } else {
+    throw new Error('Container or invalid drop target (Text button) not found');
+  }
+  
+
+}
+
+async dragAndDropChartOnArtBoard() {
+  const container = page.locator('[data-testid="Chart"]');
+  const artboard = page.locator('div#section1.layout-style');
+
+  const containerBox = await container.boundingBox();
+  const artboardBox = await artboard.boundingBox();
+
+  if (containerBox && artboardBox) {
+    await page.mouse.move(
+      containerBox.x + containerBox.width / 2,
+      containerBox.y + containerBox.height / 2
+    );
+    await page.mouse.down();
+    await page.mouse.move(
+      artboardBox.x + artboardBox.width / 2,
+      artboardBox.y + artboardBox.height / 2,
+      { steps: 20 }
+    );
+    await page.mouse.up();
+  }
+}
+
+  async verifyErrorMessage(errorMessage) {
+        let locator = `//span[text()='${errorMessage}']`;
+        await page.waitForSelector(locator);
+        const visible = await page.isVisible(locator);
+        return expect(visible).to.equal(true);
+      }
+
+  async assertChartPresentOnArtBoard() {
+    const chartOnArtboard = page.locator('div#section1.layout-style element-factory-chart');
+    const isVisible = await chartOnArtboard.isVisible();
+    expect(isVisible).to.be.true;
+}
+
+
+  async clickLoginButton() {
+    await page.click(`//button[contains (., 'Login')]`)
+}
+
+
 }
 module.exports = { creatinglyLocators };

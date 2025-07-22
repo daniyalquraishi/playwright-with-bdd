@@ -30,3 +30,29 @@ When(
     await locatorCreatingly.resizeChart();
   },
 );
+
+When('I try to pick the container and drop it to an invalid artboard',
+  { timeout: 50 * 1000 },
+  async function () {
+    await locatorCreatingly.dragAndDropToInvalidArtboard();
+  }
+);
+
+Then( 'I should see the {string} error',
+  { timeout: 50 * 1000 },
+  async function (message) {
+    await locatorCreatingly.verifyErrorMessage(message);
+  }
+);
+
+
+When( 'I pick the chart and drop it to the artboard',
+  { timeout: 50 * 1000 },
+  async function () {
+    await locatorCreatingly.dragAndDropChartOnArtBoard();
+  }
+);
+
+Then('the chart should be present on the artboard', async () => {
+  await locatorCreatingly.assertChartPresentOnArtBoard();
+});
