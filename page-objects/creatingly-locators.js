@@ -28,28 +28,50 @@ class creatinglyLocators {
   }
 
   async dropChart() {
-    const chartElement = await page.$('[data-testid="Chart"]');
-    const targetContainer = await page.$('#Container1');
+  await page.waitForSelector('[data-testid="Chart"]', { state: 'visible' });
+  await page.waitForSelector('#Container1', { state: 'visible' });
 
-    const chartBox = await chartElement.boundingBox();
-    const containerBox = await targetContainer.boundingBox();
+  const chartElement = await page.$('[data-testid="Chart"]');
+  const targetContainer = await page.$('#Container1');
 
-    if (chartBox && containerBox) {
-      await page.mouse.move(
-        chartBox.x + chartBox.width / 2,
-        chartBox.y + chartBox.height / 2,
-      );
-      await page.mouse.down();
-
-      await page.mouse.move(
-        containerBox.x + containerBox.width / 2,
-        containerBox.y + containerBox.height / 2,
-        { steps: 20 },
-      );
-
-      await page.mouse.up();
-    }
+  if (!chartElement || !targetContainer) {
+    console.error("Required elements not found");
+    return;
   }
+
+  await chartElement.scrollIntoViewIfNeeded();
+  await targetContainer.scrollIntoViewIfNeeded();
+
+  try {
+    await chartElement.dragTo(targetContainer);
+    return;
+  } catch (e) {
+    console.warn("dragTo failed, falling back to manual mouse events");
+  }
+
+  const chartBox = await chartElement.boundingBox();
+  const containerBox = await targetContainer.boundingBox();
+
+  if (chartBox && containerBox) {
+    await page.mouse.move(
+      chartBox.x + chartBox.width / 2,
+      chartBox.y + chartBox.height / 2,
+    );
+    await page.mouse.down();
+
+    await page.mouse.move(
+      containerBox.x + containerBox.width / 2,
+      containerBox.y + containerBox.height / 2,
+      { steps: 20 },
+    );
+
+    await page.mouse.up();
+  } else {
+    console.error("Bounding boxes not available");
+  }
+}
+
+
   async resizeChart() {
     await page.waitForSelector('#Container1 canvas.itemCss');
 
@@ -110,7 +132,7 @@ class creatinglyLocators {
     );
 
     await page.mouse.up();
-    await page.waitForTimeout(1000); // let error message appear
+    await page.waitForTimeout(1000); 
   } else {
     throw new Error('Container or invalid drop target (Text button) not found');
   }
@@ -119,24 +141,46 @@ class creatinglyLocators {
 }
 
 async dragAndDropChartOnArtBoard() {
-  const container = page.locator('[data-testid="Chart"]');
-  const artboard = page.locator('div#section1.layout-style');
+ await page.waitForSelector('[data-testid="Chart"]', { state: 'visible' });
+  await page.waitForSelector('div#section1.layout-style', { state: 'visible' });
 
-  const containerBox = await container.boundingBox();
-  const artboardBox = await artboard.boundingBox();
+  const chartElement = await page.$('[data-testid="Chart"]');
+  const targetContainer = await page.$('div#section1.layout-style');
 
-  if (containerBox && artboardBox) {
+  if (!chartElement || !targetContainer) {
+    console.error("Required elements not found");
+    return;
+  }
+
+  await chartElement.scrollIntoViewIfNeeded();
+  await targetContainer.scrollIntoViewIfNeeded();
+
+  try {
+    await chartElement.dragTo(targetContainer);
+    return;
+  } catch (e) {
+    console.warn("dragTo failed, falling back to manual mouse events");
+  }
+
+  const chartBox = await chartElement.boundingBox();
+  const containerBox = await targetContainer.boundingBox();
+
+  if (chartBox && containerBox) {
     await page.mouse.move(
-      containerBox.x + containerBox.width / 2,
-      containerBox.y + containerBox.height / 2
+      chartBox.x + chartBox.width / 2,
+      chartBox.y + chartBox.height / 2,
     );
     await page.mouse.down();
+
     await page.mouse.move(
-      artboardBox.x + artboardBox.width / 2,
-      artboardBox.y + artboardBox.height / 2,
-      { steps: 20 }
+      containerBox.x + containerBox.width / 2,
+      containerBox.y + containerBox.height / 2,
+      { steps: 20 },
     );
+
     await page.mouse.up();
+  } else {
+    console.error("Bounding boxes not available");
   }
 }
 
